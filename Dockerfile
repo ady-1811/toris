@@ -21,10 +21,6 @@ RUN go install golang.org/x/tools/cmd/goimports@v0.14.0 \
     && go install golang.org/x/lint/golint@v0.0.0-20210508222113-6edffad5e616 \
     && go install github.com/go-delve/delve/cmd/dlv@v1.23.0
 
-RUN pip3 install --no-cache-dir \
-    pip \
-    virtualenv
-
 WORKDIR /workspace
 
 CMD [ "bash" ]
