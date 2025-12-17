@@ -15,11 +15,11 @@ RUN apt-get update && apt-get install -y \
     bash \
     && rm -rf /var/lib/apt/lists/*
 
-RUN go install github.com/spf13/cobra-cli@latest
+RUN go install github.com/spf13/cobra-cli@v1.3.0
 
-RUN go install golang.org/x/tools/cmd/goimports@latest \
-    && go install golang.org/x/lint/golint@latest \
-    && go install github.com/go-delve/delve/cmd/dlv@latest
+RUN go install golang.org/x/tools/cmd/goimports@v0.14.0 \
+    && go install golang.org/x/lint/golint@v0.0.0-20210508222113-6edffad5e616 \
+    && go install github.com/go-delve/delve/cmd/dlv@v1.23.0
 
 RUN pip3 install --no-cache-dir \
     pip \
