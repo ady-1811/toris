@@ -22,11 +22,9 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"context"
 	"log"
 
 	"github.com/spf13/cobra"
-	"github.com/toris/ai"
 	"github.com/toris/utils"
 )
 
@@ -41,19 +39,12 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		ctx := context.Background()
-
-		client, err := ai.NewGeminiCommandClient("gemini-2.5-flash")
-		if err != nil {
-			log.Fatalf("Init error: %v", err)
-		}
-
-		result, err := client.ScanForErrors(ctx)
+		ctx := cmd.Context()
+		result, err := Client.ScanForErrors(ctx)
 		if err != nil {
 			log.Fatalf("API error: %v", err)
 		}
-
-		utils.PrintInfo(client.OSName, result.Command, result.Confidence, result.Instruction)
+		utils.PrintInfo(Client.OSName, result.Command, result.Confidence, result.Instruction, result.RiskScore)
 	},
 }
 

@@ -5,9 +5,13 @@ package cmd
 
 import (
 	"os"
+	"log"
 
 	"github.com/spf13/cobra"
+	"github.com/toris/ai"
 )
+
+var Client *ai.GeminiCommandClient
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -16,6 +20,14 @@ var rootCmd = &cobra.Command{
 	Long: `TORIS is an AI-powered terminal assistant designed to enhance your command-line experience.
 With TORIS, you can get intelligent suggestions, automate tasks, and streamline your workflow 
 directly from the terminal.`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		var err error
+		Client, err = ai.NewGeminiCommandClient("gemini-2.5-flash")
+		if err != nil {
+			log.Fatalf("Init error: %v", err)
+		}
+		return nil
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

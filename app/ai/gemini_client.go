@@ -48,7 +48,7 @@ func (c *GeminiCommandClient) GetCommand(ctx context.Context, userInput string) 
 }
 
 func (c *GeminiCommandClient) ScanForErrors(ctx context.Context) (*CommandResponse, error) {
-	logs, err := utils.GetConsoleOutput() //placeholder until I figure out how to extract logs
+	logs, err := utils.GetConsoleOutput()
 	if err != nil {
 		return nil, fmt.Errorf("Your OS doesn't support this command: %v", err)
 	}
@@ -76,7 +76,6 @@ func (c *GeminiCommandClient) getResponse(ctx context.Context, model *genai.Gene
 		}
 		return &cmdResp, nil
 	}
-
 	return nil, fmt.Errorf("unexpected response format")
 }
 
@@ -86,15 +85,15 @@ func initializeModel(c *GeminiCommandClient, modelID string) *genai.GenerativeMo
 		Parts: []genai.Part{
 			genai.Text(fmt.Sprintf(`
 				You are a command-line assistant. Your task is to translate natural language
-				into a JSON command object for %s, and give instructions on how to run it. 
-				If the user asks you to fix an error, provide solution in the same format, but you may 
-				leave the "command" empty only when not required.
+				into a JSON command object for %s, containing a list of command(s) as required and give instructions on how to run it/them. 
+				If the user asks you to fix an error, provide solution in the same format. Make sure to have the list of commands in the commands field and instructions in the instructions field strictly
 
 				Always return ONLY valid JSON in this format:
 				{
-					"command": string,
+					"commands": [string],
 					"confidence": float
 					"instructions": [string]
+					"risk_score:": int (0 for low risk, 10 for high)
 				}`, c.OSName)),
 		},
 	}

@@ -23,11 +23,9 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"context"
 	"log"
 
 	"github.com/spf13/cobra"
-	"github.com/toris/ai"
 	"github.com/toris/utils"
 )
 
@@ -42,18 +40,12 @@ and executes it in your shell environment. For example:
 This will generate and execute the appropriate command to list files.`,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		ctx := context.Background()
-		client, err := ai.NewGeminiCommandClient("gemini-2.5-flash")
-		if err != nil {
-			log.Fatalf("Init error: %v", err)
-		}
-
-		result, err := client.GetCommand(ctx, args[0])
+		ctx := cmd.Context()
+		result, err := Client.GetCommand(ctx, args[0])
 		if err != nil {
 			log.Fatalf("API error: %v", err)
 		}
-
-		utils.PrintInfo(client.OSName, result.Command, result.Confidence, result.Instruction)
+		utils.PrintInfo(Client.OSName, result.Command, result.Confidence, result.Instruction, result.RiskScore)
 	},
 }
 

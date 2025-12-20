@@ -2,60 +2,63 @@ package utils
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+	"regexp"
 )
 
 func GetConsoleOutput() (string, error) {
 	os := GetOS()
 
 	switch {
-	case strings.Contains(os, "linux"), strings.Contains(os, "darwin"): // macOS and Linux
-		return getUnixHistory()
+	case strings.Contains(os, "linux"):
+		return getLinuxTerminalBuffer()
+	case strings.Contains(os, "darwin"): // macOS and Linux
+		return getmacOSTerminalBuffer()
 	case strings.Contains(os, "windows"):
-		return getWindowsPowerShellHistory()
+		return getWindowsTerminalBuffer()
 	default:
 		return "", fmt.Errorf("unsupported platform: %s", runtime.GOOS)
 	}
 }
 
-// AI-Generated
-func getUnixHistory() (string, error) {
-	home, _ := os.UserHomeDir()
-	shell := os.Getenv("SHELL")
-	var historyFile string
-
-	if strings.Contains(shell, "zsh") {
-		historyFile = home + "/.zsh_history"
-	} else {
-		historyFile = home + "/.bash_history"
-	}
-
-	file, err := os.Open(historyFile)
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
-	stat, _ := file.Stat()
-	start := stat.Size() - 500
-	if start < 0 {
-		start = 0
-	}
-
-	buf := make([]byte, 500)
-	_, err = file.ReadAt(buf, start)
-	return string(buf), err
+// AI-generated code 
+func getmacOSTerminalBuffer() (string, error) {
+	script := `tell application "Terminal" to get contents of selected tab of window 1`
+	cmd := exec.Command("osascript", "-e", script)
+	out, err := cmd.Output()
+	return cleanTerminalText(string(out)), err
 }
 
-// AI-Generated
-func getWindowsPowerShellHistory() (string, error) {
-	cmd := exec.Command("powershell", "-Command", "Get-History -Count 5 | Select-Object -ExpandProperty CommandLine")
+// AI-generated code 
+func getLinuxTerminalBuffer() (string, error) {
+	cmd := exec.Command("tmux", "capture-pane", "-p")
 	out, err := cmd.Output()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("linux capture requires running inside TMUX")
 	}
-	return string(out), nil
+	return cleanTerminalText(string(out)), err
 }
+
+// AI-generated code 
+func getWindowsTerminalBuffer() (string, error) {
+	psCommand := `
+		$Host.UI.RawUI.GetBufferContents(
+			(New-Object System.Management.Automation.Host.Rectangle(0,0,80,25))
+		) | ForEach-Object { $_.Character } -join ''
+	`
+	cmd := exec.Command("powershell", "-Command", psCommand)
+	out, err := cmd.Output()
+	return cleanTerminalText(string(out)), err
+}
+
+// AI-generated code 
+func cleanTerminalText(input string) string {
+	const ansi = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[-a-zA-Z\\d\\/#&.:=?%@~]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"
+	var re = regexp.MustCompile(ansi)
+	clean := re.ReplaceAllString(input, "")
+	
+	return strings.TrimSpace(clean)
+}
+
