@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     build-essential \
     bash \
+    nano \
     && rm -rf /var/lib/apt/lists/*
 
 RUN go install github.com/spf13/cobra-cli@v1.3.0
@@ -23,5 +24,7 @@ RUN go install golang.org/x/tools/cmd/goimports@v0.14.0 \
 
 WORKDIR /workspace
 
-CMD [ "bash" ]
+COPY . /workspace/
+
+CMD [ "tail", "-f", "/dev/null" ]
 
