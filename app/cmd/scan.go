@@ -44,11 +44,11 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Fatalf("API error: %v", err)
 		}
-		utils.PrintInfo(Client.OSName, result.Command, result.Confidence, result.Instruction, result.RiskScore)
+		utils.PrintInfo(Client.OSName, result.Command, result.Confidence, result.Instruction, result.RiskScore, result.Confirm)
+		utils.ExecuteCommand(result)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(scanCmd)
-
 }

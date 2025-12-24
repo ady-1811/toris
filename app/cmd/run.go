@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -45,7 +46,10 @@ This will generate and execute the appropriate command to list files.`,
 		if err != nil {
 			log.Fatalf("API error: %v", err)
 		}
-		utils.PrintInfo(Client.OSName, result.Command, result.Confidence, result.Instruction, result.RiskScore)
+		utils.PrintInfo(Client.OSName, result.Command, result.Confidence, result.Instruction, result.RiskScore, result.Confirm)
+		fmt.Println("Executing command...")
+		fmt.Println(utils.GetLastOutput())
+		utils.ExecuteCommand(result)
 	},
 }
 

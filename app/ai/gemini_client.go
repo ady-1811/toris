@@ -43,12 +43,12 @@ func NewGeminiCommandClient(modelID string) (*GeminiCommandClient, error) {
 	return c, nil
 }
 
-func (c *GeminiCommandClient) GetCommand(ctx context.Context, userInput string) (*CommandResponse, error) {
+func (c *GeminiCommandClient) GetCommand(ctx context.Context, userInput string) (*utils.CommandResponse, error) {
 	return c.getResponse(ctx, c.Model, userInput)
 }
 
-func (c *GeminiCommandClient) ScanForErrors(ctx context.Context) (*CommandResponse, error) {
-	logs, err := utils.GetConsoleOutput()
+func (c *GeminiCommandClient) ScanForErrors(ctx context.Context) (*utils.CommandResponse, error) {
+	logs, err := utils.GetLastOutput()
 	if err != nil {
 		return nil, fmt.Errorf("Your OS doesn't support this command: %v", err)
 	}
@@ -57,7 +57,7 @@ func (c *GeminiCommandClient) ScanForErrors(ctx context.Context) (*CommandRespon
 	return c.getResponse(ctx, c.Model, error_instruction+logs)
 }
 
-func (c *GeminiCommandClient) getResponse(ctx context.Context, model *genai.GenerativeModel, userInput string) (*CommandResponse, error) {
+func (c *GeminiCommandClient) getResponse(ctx context.Context, model *genai.GenerativeModel, userInput string) (*utils.CommandResponse, error) {
 	resp, err := model.GenerateContent(ctx, genai.Text(userInput))
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func (c *GeminiCommandClient) getResponse(ctx context.Context, model *genai.Gene
 		return nil, fmt.Errorf("no candidates returned from Gemini")
 	}
 
-	var cmdResp CommandResponse
+	var cmdResp utils.CommandResponse
 	part := resp.Candidates[0].Content.Parts[0]
 	if text, ok := part.(genai.Text); ok {
 		err := json.Unmarshal([]byte(text), &cmdResp)
@@ -90,10 +90,11 @@ func initializeModel(c *GeminiCommandClient, modelID string) *genai.GenerativeMo
 
 				Always return ONLY valid JSON in this format:
 				{
-					"commands": [string],
+					"commands": [string] (If any user input is needed, use placeholders like <input>),
 					"confidence": float
 					"instructions": [string]
 					"risk_score:": int (0 for low risk, 10 for high)
+					"confirm" : bool (true if user confirmation is needed before executing the command(s). This is for crtical commands that may affect system stability)	
 				}`, c.OSName)),
 		},
 	}
