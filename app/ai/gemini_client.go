@@ -19,10 +19,7 @@ type GeminiCommandClient struct {
 }
 
 func NewGeminiCommandClient(modelID string) (*GeminiCommandClient, error) {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		return nil, fmt.Errorf("No .env file found or error loading it: %v", err)
-	}
+	_ = godotenv.Load("../.env")
 
 	apiKey := os.Getenv("GEMINI_API_KEY")
 	if apiKey == "" {
