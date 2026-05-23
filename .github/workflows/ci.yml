@@ -2,9 +2,7 @@ name: TORIS CI/CD Pipeline
 
 on:
   push:
-    branches:
   pull_request:
-    branches:
 
 jobs:
   build-and-test:
@@ -12,6 +10,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./app
     
     steps:
     - uses: actions/checkout@v4
@@ -20,6 +21,8 @@ jobs:
       uses: actions/setup-go@v5
       with:
         go-version: '1.25.5'
+        cache: true
+        cache-dependency-path: app/go.mod
 
     - name: Run Linter
       run: go vet ./...
