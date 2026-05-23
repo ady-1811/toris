@@ -42,7 +42,7 @@ to quickly create a Cobra application.`,
 		ctx := cmd.Context()
 		result, err := Client.ScanForErrors(ctx)
 		if err != nil {
-			log.Fatalf("API error: %v", err)
+			log.Fatalf("Error: %v", err)
 		}
 		utils.PrintInfo(Client.OSName, result.Command, result.Confidence, result.Instruction, result.RiskScore, result.Confirm)
 		utils.ExecuteCommand(result)

@@ -4,8 +4,8 @@ Copyright © 2025 TORIS
 package cmd
 
 import (
-	"os"
 	"log"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/toris/ai"
@@ -15,7 +15,7 @@ var Client *ai.GeminiCommandClient
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "hello",
+	Use:   "toris",
 	Short: "TORIS - Terminal Organized and Rational IntelliSense",
 	Long: `TORIS is an AI-powered terminal assistant designed to enhance your command-line experience.
 With TORIS, you can get intelligent suggestions, automate tasks, and streamline your workflow 

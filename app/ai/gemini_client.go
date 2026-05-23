@@ -48,7 +48,7 @@ func (c *GeminiCommandClient) GetCommand(ctx context.Context, userInput string) 
 }
 
 func (c *GeminiCommandClient) ScanForErrors(ctx context.Context) (*utils.CommandResponse, error) {
-	logs, err := utils.GetLastOutput()
+	logs, err := utils.GetConsoleOutput()
 	if err != nil {
 		return nil, fmt.Errorf("Your OS doesn't support this command: %v", err)
 	}
@@ -64,7 +64,7 @@ func (c *GeminiCommandClient) getResponse(ctx context.Context, model *genai.Gene
 	}
 
 	if len(resp.Candidates) == 0 {
-		return nil, fmt.Errorf("no candidates returned from Gemini")
+		return nil, fmt.Errorf("No candidates returned from Gemini")
 	}
 
 	var cmdResp utils.CommandResponse
@@ -72,11 +72,11 @@ func (c *GeminiCommandClient) getResponse(ctx context.Context, model *genai.Gene
 	if text, ok := part.(genai.Text); ok {
 		err := json.Unmarshal([]byte(text), &cmdResp)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse JSON: %v", err)
+			return nil, fmt.Errorf("Failed to parse JSON: %v", err)
 		}
 		return &cmdResp, nil
 	}
-	return nil, fmt.Errorf("unexpected response format")
+	return nil, fmt.Errorf("Unexpected response format")
 }
 
 func initializeModel(c *GeminiCommandClient, modelID string) *genai.GenerativeModel {
