@@ -44,11 +44,10 @@ This will generate and execute the appropriate command to list files.`,
 		ctx := cmd.Context()
 		result, err := Client.GetCommand(ctx, args[0])
 		if err != nil {
-			log.Fatalf("API error: %v", err)
+			log.Fatalf("Error: %v", err)
 		}
 		utils.PrintInfo(Client.OSName, result.Command, result.Confidence, result.Instruction, result.RiskScore, result.Confirm)
 		fmt.Println("Executing command...")
-		fmt.Println(utils.GetLastOutput())
 		utils.ExecuteCommand(result)
 	},
 }
