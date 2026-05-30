@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  toris:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: toris
+    volumes:
+      - .:/workspace
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
+
